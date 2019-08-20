@@ -16,9 +16,9 @@ import reactor.core.publisher.Mono;
  * @date 2019/8/19 22:37
  */
 @Component
-public class GatewayRequestLogFilter implements GlobalFilter, Ordered {
+public class GlobalRequestLogFilter implements GlobalFilter, Ordered {
 
-    private static Logger logger = LoggerFactory.getLogger(GatewayRequestLogFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(GlobalRequestLogFilter.class);
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

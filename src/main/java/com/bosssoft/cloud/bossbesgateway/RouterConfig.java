@@ -45,16 +45,15 @@ public class RouterConfig {
     @Bean
     public RouteLocator routeLocatorPermission(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(PERMISSION_ROUTE_ID,
-                        r -> r.path(PERMISSION_ROUTE_PATH).and()
-                                .readBody(Object.class, requestBody -> true)
-                                .filters(f -> f
-                                        .stripPrefix(3)
-                                        .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
-                                        .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
-                                        .filter(oauthFilter)
-                                )
-                                .uri("lb://BOSS-BES-PERMISSION")).build();
+            .route(PERMISSION_ROUTE_ID, r -> r.path(PERMISSION_ROUTE_PATH).and()
+                .readBody(Object.class, requestBody -> true)
+                .filters(f -> f
+                        .stripPrefix(3)
+                        .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
+                        .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
+                        .filter(oauthFilter)
+                )
+                .uri("lb://BOSS-BES-PERMISSION")).build();
     }
 
     /**

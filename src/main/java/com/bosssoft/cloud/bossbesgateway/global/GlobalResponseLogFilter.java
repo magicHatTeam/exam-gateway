@@ -24,9 +24,9 @@ import java.nio.charset.Charset;
  * @date 2019/8/19 23:26
  */
 @Component
-public class GatewayResponseLogFilter implements GlobalFilter, Ordered {
+public class GlobalResponseLogFilter implements GlobalFilter, Ordered {
 
-    private static Logger logger = LoggerFactory.getLogger(GatewayResponseLogFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(GlobalResponseLogFilter.class);
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpResponse originalResponse = exchange.getResponse();
@@ -62,6 +62,6 @@ public class GatewayResponseLogFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -2;
+        return -10;
     }
 }
