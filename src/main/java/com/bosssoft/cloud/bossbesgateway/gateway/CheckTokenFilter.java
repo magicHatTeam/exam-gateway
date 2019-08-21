@@ -26,14 +26,15 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 /**
+ * 权限验证拦截器 - 业务模块需要添加此拦截器
  * 验证是否存在Token
  * 并验证Token的有效性
  * @author likang
  * @date 2019/8/19 22:11
  */
 @Component
-public class OauthFilter implements GatewayFilter, Ordered {
-    private static Logger logger = LoggerFactory.getLogger(OauthFilter.class);
+public class CheckTokenFilter implements GatewayFilter, Ordered {
+    private static Logger logger = LoggerFactory.getLogger(CheckTokenFilter.class);
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

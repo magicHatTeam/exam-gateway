@@ -187,7 +187,7 @@ public class MyRedisRateLimiter extends AbstractRateLimiter<RedisRateLimiter.Con
     }
 
     public Map<String, String> getHeaders(RedisRateLimiter.Config config, Long tokensLeft) {
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>(3);
         if (isIncludeHeaders()) {
             headers.put(this.remainingHeader, tokensLeft.toString());
             headers.put(this.replenishRateHeader,
