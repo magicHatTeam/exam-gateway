@@ -9,6 +9,7 @@ import com.bosssoft.cloud.bossbesgateway.exception.AppException;
 import com.bosssoft.cloud.bossbesgateway.util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,39 +42,30 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
 
     private static final String REQUEST_CACHE_STRING = "cachedRequestBodyObject";
     private static final String REQUEST_HEAD_STRING = "head";
+    private static final Integer REQUEST_BODY_LENGTH = 2;
     private static final String REQUEST_TOKEN_STRING = "token";
     private static final String REQUEST_TOKEN_ID_STRING = "id";
-    private static final Integer REQUEST_BODY_LENGTH = 2;
 
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        Map<String,Map<String,Object>> requestBody = exchange.getAttribute(REQUEST_CACHE_STRING);
-        if (requestBody != null && requestBody.size() == REQUEST_BODY_LENGTH) {
-            Map<String,Object> head = requestBody.get(REQUEST_HEAD_STRING);
-            if (head != null && head.size() > 0) {
-                if (head.containsKey(REQUEST_TOKEN_STRING)){
-                    String token = head.get(REQUEST_TOKEN_STRING).toString();
-                    // 验证token是否存在
-                    if (!token.isEmpty()) {
-                        Map<String, String> tokenMap = JwtUtil.verifyToken(token);
-                        String userId = tokenMap.get(REQUEST_TOKEN_ID_STRING);
-                        String data = stringRedisTemplate.opsForValue().get(userId);
-                        if (data != null) {
-                            // 在redis验证token是否有效
-                            return chain.filter(exchange);
-                        } else {
-                            // 无效，提示token失效，需重新登录
-                            throw new AppException(ResultEnum.TOKEN_INVALID);
-                        }
-                    } else {
-                        // 不存在，提示未登录，重新登录
-                        throw new AppException(ResultEnum.TOKEN_NOT_EXITS);
-                    }
-                }
+        String token = exchange.getRequest().getHeaders().getFirst(REQUEST_TOKEN_STRING);
+        // 验证token是否存在
+        if (StringUtils.isNotEmpty(token)) {
+            Map<String, String> tokenMap = JwtUtil.verifyToken(token);
+            String userId = tokenMap.get(REQUEST_TOKEN_ID_STRING);
+            String data = stringRedisTemplate.opsForValue().get(userId);
+            if (data != null) {
+                // 在redis验证token是否有效
+                return chain.filter(exchange);
+            } else {
+                // 无效，提示token失效，需重新登录
+                throw new AppException(ResultEnum.TOKEN_INVALID);
             }
+        } else {
+            // 不存在，提示未登录，重新登录
+            throw new AppException(ResultEnum.TOKEN_NOT_EXITS);
         }
-        throw new AppException(ResultEnum.REQUEST_BODY_PARAMS_ERROR);
     }
 
     @Override
