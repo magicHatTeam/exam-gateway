@@ -17,6 +17,8 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 网关服务
@@ -49,7 +51,7 @@ public class RouterController {
         jsonObject.put("companyName", body.get("companyName"));
         jsonObject.put("orgId", body.get("orgId"));
         jsonObject.put("orgName", body.get("orgName"));
-        stringRedisTemplate.opsForValue().set("id",jsonObject.toJSONString());
+        stringRedisTemplate.opsForValue().set(body.get("username").toString(),jsonObject.toJSONString(),12+(new Random().nextInt(10)), TimeUnit.HOURS);
         Map<String,String> map = new HashMap<>(1);
         map.put("id",body.get("username").toString());
         jsonObject.clear();
