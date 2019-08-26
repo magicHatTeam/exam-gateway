@@ -32,8 +32,7 @@ public class RouterController {
      * @return Mono
      */
     @RequestMapping("/fallback")
-    public Mono<String> fallback() {
-        CommonResponse commonResponse = ResponseUtil.buildError(ResultEnum.GATEWAY_HYSTRIX_TIMEOUT_ERROR);
-        return Mono.just(JSONObject.toJSONString(commonResponse));
+    public Mono<CommonResponse> fallback() {
+        return Mono.just(ResponseUtil.buildError(ResultEnum.GATEWAY_HYSTRIX_TIMEOUT_ERROR));
     }
 }
