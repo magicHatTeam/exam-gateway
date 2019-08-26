@@ -1,6 +1,5 @@
 package com.bosssoft.cloud.bossbesgateway;
 
-import com.bosssoft.cloud.bossbesgateway.gateway.AuthRouteFilter;
 import com.bosssoft.cloud.bossbesgateway.gateway.CheckTokenFilter;
 import com.bosssoft.cloud.bossbesgateway.limiterconfig.MyRedisRateLimiter;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;

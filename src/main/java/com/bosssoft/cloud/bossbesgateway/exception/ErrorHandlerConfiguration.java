@@ -1,6 +1,4 @@
 package com.bosssoft.cloud.bossbesgateway.exception;
-import java.util.Collections;
-import java.util.List;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
@@ -15,7 +13,12 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
+ * 配置异常
  * @author likang
  * @date 2019/8/20 17:02
  */

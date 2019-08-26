@@ -1,12 +1,11 @@
 package com.bosssoft.cloud.bossbesgateway.exception;
 
 
-import com.boss.bes.core.data.vo.ResultEnum;
+import com.boss.bes.core.data.pojo.ResultEnum;
 
 /**
- *  异常的父类接口  不允许自定义异常 全部通过预定义枚举赋值
- * @author fishkk
- * @version 1.0.0
+ * 异常的父类接口  不允许自定义异常 全部通过预定义枚举赋值
+ * @author likang
  * @since 2019/8/12
  */
 

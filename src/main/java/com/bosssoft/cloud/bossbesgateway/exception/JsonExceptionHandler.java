@@ -1,14 +1,12 @@
 package com.bosssoft.cloud.bossbesgateway.exception;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.boss.bes.core.data.pojo.CommonResponse;
+import com.boss.bes.core.data.pojo.ResultEnum;
 import com.boss.bes.core.data.util.ResponseUtil;
-import com.boss.bes.core.data.vo.CommonResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.boss.bes.core.data.vo.ResultEnum;
-import com.boss.bes.core.data.vo.head.CommonRequestHead;
-import com.boss.bes.core.data.vo.head.CommonResponseHead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
@@ -26,6 +24,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
+ * 统一异常处理
  * @author likang
  * @date 2019/8/20 16:04
  */
