@@ -3,12 +3,11 @@ package com.bosssoft.cloud.bossbesgateway.gateway;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.boss.bes.common.utils.JwtUtil;
+import com.boss.bes.common.utils.constants.CommonCacheConstants;
 import com.boss.bes.core.data.pojo.ResultEnum;
 import com.bosssoft.cloud.bossbesgateway.exception.AppException;
-import com.bosssoft.cloud.bossbesgateway.util.JwtUtil;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.Ordered;
@@ -18,7 +17,9 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 权限验证拦截器 - 业务模块需要添加此拦截器
@@ -35,38 +36,41 @@ import java.util.*;
  */
 @Component
 public class CheckTokenFilter implements GatewayFilter, Ordered {
-    private static Logger logger = LoggerFactory.getLogger(CheckTokenFilter.class);
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    private static final String REQUEST_TOKEN_STRING = "token";
-    private static final String REQUEST_TOKEN_ID_STRING = "id";
-
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String token = exchange.getRequest().getHeaders().getFirst(REQUEST_TOKEN_STRING);
+        String token = exchange.getRequest().getHeaders().getFirst(CommonCacheConstants.REQUEST_TOKEN);
         // 验证token是否存在
         if (StringUtils.isNotEmpty(token)) {
             Map<String, String> tokenMap = JwtUtil.verifyToken(token);
-            String userId = tokenMap.get(REQUEST_TOKEN_ID_STRING);
+            String userId = tokenMap.get(CommonCacheConstants.USER_ID);
             String data = stringRedisTemplate.opsForValue().get(userId);
             if (data != null) {
                 String uri = String.valueOf(exchange.getRequest().getPath());
                 if (uri!=null) {
                     JSONObject jsonObject = JSON.parseObject(data);
                     JSONArray jsonArray = (JSONArray) jsonObject.get("roles");
-                    List<String> roles = JSONArray.parseArray(jsonArray.toJSONString(), String.class);
-                    List<String> list = new ArrayList<>();
-                    roles.forEach(item -> {
-                        String urls = stringRedisTemplate.opsForValue().get(item);
-                        List<String> urlList = JSONArray.parseArray(urls, String.class);
-                        if (urlList != null && urlList.size() > 0) {
-                            list.addAll(urlList);
+                    if (jsonArray != null) {
+                        List<String> roles = JSONArray.parseArray(jsonArray.toJSONString(), String.class);
+                        if (roles !=null && roles.size()>0) {
+                            List<String> list = new ArrayList<>();
+                            roles.forEach(item -> {
+                                String urls = stringRedisTemplate.opsForValue().get(item);
+                                List<String> urlList = JSONArray.parseArray(urls, String.class);
+                                if (urlList != null && urlList.size() > 0) {
+                                    list.addAll(urlList);
+                                }
+                            });
+                            if (list.contains(uri)) {
+                                return chain.filter(exchange);
+                            } else {
+                                throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
+                            }
+                        }else{
+                            throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
                         }
-                    });
-                    if (list.contains(uri)) {
-                        return chain.filter(exchange);
                     }else{
                         throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
                     }
