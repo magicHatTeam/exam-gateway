@@ -31,6 +31,7 @@ import java.util.Map;
  * 先从token里面拿用户ID
  * 再从redis里面拿用户角色
  * 根据访问路由与redis里面缓存的路由比较，角色一致放行，不一致报没权限异常
+ * TODO：校验每次请求的删除权限，比对公司ID，超级管理员都能删除...
  * @author likang
  * @date 2019/8/19 22:11
  */
@@ -53,7 +54,7 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
                     JSONObject jsonObject = JSON.parseObject(data);
                     JSONArray jsonArray = (JSONArray) jsonObject.get("roles");
                     if (jsonArray != null) {
-                        List<String> roles = JSONArray.parseArray(jsonArray.toJSONString(), String.class);
+                        List<Long> roles = JSONArray.parseArray(jsonArray.toJSONString(), Long.class);
                         if (roles !=null && roles.size()>0) {
                             List<String> list = new ArrayList<>();
                             roles.forEach(item -> {
