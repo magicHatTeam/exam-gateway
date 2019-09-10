@@ -40,6 +40,8 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    private static final Boolean NEED_AUTH_URL = false;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String token = exchange.getRequest().getHeaders().getFirst(CommonCacheConstants.REQUEST_TOKEN);
@@ -49,6 +51,10 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
             String userId = tokenMap.get(CommonCacheConstants.USER_ID);
             String data = stringRedisTemplate.opsForValue().get(userId);
             if (data != null) {
+                if (!NEED_AUTH_URL){
+                    // 不需要验证路由权限验证
+                    return chain.filter(exchange);
+                }
                 String uri = String.valueOf(exchange.getRequest().getPath());
                 if (uri!=null) {
                     JSONObject jsonObject = JSON.parseObject(data);
@@ -58,7 +64,7 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
                         if (roles !=null && roles.size()>0) {
                             List<String> list = new ArrayList<>();
                             roles.forEach(item -> {
-                                String urls = stringRedisTemplate.opsForValue().get(item);
+                                String urls = stringRedisTemplate.opsForValue().get(String.valueOf(item));
                                 List<String> urlList = JSONArray.parseArray(urls, String.class);
                                 if (urlList != null && urlList.size() > 0) {
                                     list.addAll(urlList);
