@@ -50,45 +50,39 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
             Map<String, String> tokenMap = JwtUtil.verifyToken(token);
             String userId = tokenMap.get(CommonCacheConstants.USER_ID);
             String data = stringRedisTemplate.opsForValue().get(userId);
-            if (data != null) {
-                if (!NEED_AUTH_URL){
-                    // 不需要验证路由权限验证
-                    return chain.filter(exchange);
-                }
-                String uri = String.valueOf(exchange.getRequest().getPath());
-                if (uri!=null) {
-                    JSONObject jsonObject = JSON.parseObject(data);
-                    JSONArray jsonArray = (JSONArray) jsonObject.get("roles");
-                    if (jsonArray != null) {
-                        List<Long> roles = JSONArray.parseArray(jsonArray.toJSONString(), Long.class);
-                        if (roles !=null && roles.size()>0) {
-                            List<String> list = new ArrayList<>();
-                            roles.forEach(item -> {
-                                String urls = stringRedisTemplate.opsForValue().get(String.valueOf(item));
-                                List<String> urlList = JSONArray.parseArray(urls, String.class);
-                                if (urlList != null && urlList.size() > 0) {
-                                    list.addAll(urlList);
-                                }
-                            });
-                            if (list.contains(uri)) {
-                                return chain.filter(exchange);
-                            } else {
-                                throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
-                            }
-                        }else{
-                            throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
-                        }
-                    }else{
-                        throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
-                    }
-                }else {
-                    throw new AppException(ResultEnum.SYSTEM_ERROR);
-                }
-            } else {
+            if (data == null) {
                 // 无效，提示token失效，需重新登录
                 throw new AppException(ResultEnum.TOKEN_INVALID);
             }
-        } else {
+            if (!NEED_AUTH_URL){
+                // 不需要验证路由权限验证
+                return chain.filter(exchange);
+            }
+            //todo 验证菜单权限，验证删除权限，只能删除当前用户所在公司或者组织机构的数据
+            String uri = String.valueOf(exchange.getRequest().getPath());
+            if (uri == null) {
+                throw new AppException(ResultEnum.SYSTEM_ERROR);
+            }
+            JSONObject jsonObject = JSON.parseObject(data);
+            JSONArray jsonArray = (JSONArray) jsonObject.get("roles");
+            if (jsonArray != null) {
+                List<Long> roles = JSONArray.parseArray(jsonArray.toJSONString(), Long.class);
+                if (roles !=null && roles.size()>0) {
+                    List<String> list = new ArrayList<>();
+                    roles.forEach(item -> {
+                        String urls = stringRedisTemplate.opsForValue().get("action" + item);
+                        List<String> urlList = JSONArray.parseArray(urls, String.class);
+                        if (urlList != null && urlList.size() > 0) {
+                            list.addAll(urlList);
+                        }
+                    });
+                    if (list.contains(uri)) {
+                        return chain.filter(exchange);
+                    }
+                }
+            }
+            throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
+        }else {
             // 不存在，提示未登录，重新登录
             throw new AppException(ResultEnum.TOKEN_NOT_EXITS);
         }
