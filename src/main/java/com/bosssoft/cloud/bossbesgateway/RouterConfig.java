@@ -65,6 +65,14 @@ public class RouterConfig {
      * 考试路由路径
      */
     private static final String EXAM_ROUTE_PATH = "/boss/bes/exam/**";
+    /**
+     * 学生考试路由ID
+     */
+    private static final String TEST_ROUTE_ID = "test";
+    /**
+     * 学生考试路由路径
+     */
+    private static final String TEST_ROUTE_PATH = "/boss/bes/test/**";
 
     /**
      * 权限微服务
@@ -149,7 +157,14 @@ public class RouterConfig {
                                 .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
                                 .filter(checkTokenFilter)
                         )
-                        .uri("lb://BOSS-BES-EXAM")).build();
+                        .uri("lb://BOSS-BES-EXAM"))
+                .route(TEST_ROUTE_ID, r -> r.path(TEST_ROUTE_PATH).and().readBody(Object.class, requestBody -> true)
+                        .filters(f -> f.stripPrefix(3)
+                                .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
+                                .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
+                        )
+                        .uri("lb://BOSS-BES-EXAM"))
+                .build();
     }
 
 }
