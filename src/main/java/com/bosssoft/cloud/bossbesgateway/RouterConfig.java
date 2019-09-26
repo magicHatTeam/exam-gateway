@@ -75,6 +75,38 @@ public class RouterConfig {
     private static final String TEST_ROUTE_PATH = "/boss/bes/test/**";
 
     /**
+     * 图片上传
+     * @param builder 路由设置
+     * @return RouteLocator
+     */
+    @Bean
+    public RouteLocator routeLocatorUploadFile(RouteLocatorBuilder builder) {
+        return builder.routes()
+                // 考试服务上传文件
+                .route("file_exam", r -> r.path("/boss/bes/file/exam/**")
+                        .filters(f -> f.stripPrefix(4)
+                                .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
+                                .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
+                        )
+                        .uri("lb://BOSS-BES-EXAM"))
+                // 基础数据服务上传文件
+                .route("file_base", r -> r.path("/boss/bes/file/basedata/**")
+                        .filters(f -> f.stripPrefix(4)
+                                .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
+                                .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
+                        )
+                        .uri("lb://BOSS-BES-BASEDATA"))
+                // 系统服务上传文件
+                .route("file_system", r -> r.path("/boss/bes/file/system/**")
+                        .filters(f -> f.stripPrefix(4)
+                                .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
+                                .requestRateLimiter(config -> config.setKeyResolver(ipKeyResolver).setRateLimiter(myRedisRateLimiter))
+                        )
+                        .uri("lb://BOSS-BES-SYSTEM"))
+                .build();
+    }
+
+    /**
      * 权限微服务
      * @param builder 路由设置
      * @return RouteLocator
