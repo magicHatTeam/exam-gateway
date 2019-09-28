@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway.limiterconfig;
+package com.bosssoft.cloud.gateway.limiterconfig;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

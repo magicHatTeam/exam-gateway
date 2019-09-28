@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway;
+package com.bosssoft.cloud.gateway;
 
 import com.boss.bes.core.data.pojo.CommonResponse;
 import com.boss.bes.core.data.pojo.ResultEnum;

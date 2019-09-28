@@ -1,7 +1,7 @@
-package com.bosssoft.cloud.bossbesgateway;
+package com.bosssoft.cloud.gateway;
 
-import com.bosssoft.cloud.bossbesgateway.gateway.CheckTokenFilter;
-import com.bosssoft.cloud.bossbesgateway.limiterconfig.MyRedisRateLimiter;
+import com.bosssoft.cloud.gateway.gateway.CheckTokenFilter;
+import com.bosssoft.cloud.gateway.limiterconfig.MyRedisRateLimiter;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -76,6 +76,7 @@ public class RouterConfig {
 
     /**
      * 图片上传
+     * 该路径需要在其他业务路径前面，否则会报415类型错误
      * @param builder 路由设置
      * @return RouteLocator
      */

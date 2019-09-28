@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway.limiterconfig;
+package com.bosssoft.cloud.gateway.limiterconfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

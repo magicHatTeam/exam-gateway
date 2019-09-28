@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway.exception;
+package com.bosssoft.cloud.gateway.exception;
 
 
 import com.boss.bes.core.data.pojo.ResultEnum;

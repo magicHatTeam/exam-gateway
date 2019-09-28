@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway.exception;
+package com.bosssoft.cloud.gateway.exception;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;

@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway;
+package com.bosssoft.cloud.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.bosssoft.cloud.bossbesgateway.global;
+package com.bosssoft.cloud.gateway.global;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
