@@ -75,7 +75,7 @@ public class RouterConfig {
     private static final String TEST_ROUTE_PATH = "/boss/bes/test/**";
 
     /**
-     * 图片上传
+     * 图片上传，不校验token
      * 该路径需要在其他业务路径前面，否则会报415类型错误
      * @param builder 路由设置
      * @return RouteLocator
@@ -108,7 +108,7 @@ public class RouterConfig {
     }
 
     /**
-     * 权限微服务
+     * 权限微服务，不校验token
      * @param builder 路由设置
      * @return RouteLocator
      */
