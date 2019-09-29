@@ -38,6 +38,7 @@ public class JsonExceptionHandler extends DefaultErrorWebExceptionHandler {
 
     /**
      * 获取异常属性
+     * 在这里进行异常的处理统一格式的转换，并记录日志
      */
     @Override
     protected Map<String, Object> getErrorAttributes(ServerRequest request, boolean includeStackTrace) {

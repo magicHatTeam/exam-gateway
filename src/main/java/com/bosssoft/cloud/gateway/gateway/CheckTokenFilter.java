@@ -45,8 +45,7 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
     private StringRedisTemplate stringRedisTemplate;
 
     private static String[] whiteList = {"login"};
-
-    private static final Boolean NEED_AUTH_URL = false;
+    private static String[] blackList = {"test"};
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -60,16 +59,18 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
                 // 无效，提示token失效，需重新登录
                 throw new AppException(ResultEnum.TOKEN_INVALID);
             }
-            if (!NEED_AUTH_URL){
-                // 不需要验证路由权限验证
-                return chain.filter(exchange);
-            }
             String currentUrl = exchange.getRequest().getHeaders().getFirst("currentUrl");
-            // 白名单不需要验证路由
             if (StrUtil.isNotEmpty(currentUrl)){
+                // 白名单不需要验证路由
                 for (String url : whiteList) {
                     if (url.equals(currentUrl)){
                         return chain.filter(exchange);
+                    }
+                }
+                // 黑名单不需要验证直接拦截
+                for (String url : blackList) {
+                    if (url.equals(currentUrl)){
+                        throw new AppException(ResultEnum.REQUEST_NO_AUTH_ERROR);
                     }
                 }
                 // 验证是否具有菜单路由

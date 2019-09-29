@@ -51,6 +51,7 @@ public class ErrorHandlerConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes) {
+        // 将自定义异常处理类注入spring
         JsonExceptionHandler exceptionHandler = new JsonExceptionHandler(
                 errorAttributes,
                 this.resourceProperties,

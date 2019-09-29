@@ -184,6 +184,7 @@ public class RouterConfig {
     @Bean
     public RouteLocator routeLocatorExam(RouteLocatorBuilder builder) {
         return builder.routes()
+                // 考试管理路由
                 .route(EXAM_ROUTE_ID, r -> r.path(EXAM_ROUTE_PATH).and().readBody(Object.class, requestBody -> true)
                         .filters(f -> f.stripPrefix(3)
                                 .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
@@ -191,6 +192,7 @@ public class RouterConfig {
                                 .filter(checkTokenFilter)
                         )
                         .uri("lb://BOSS-BES-EXAM"))
+                // 考试路由
                 .route(TEST_ROUTE_ID, r -> r.path(TEST_ROUTE_PATH).and().readBody(Object.class, requestBody -> true)
                         .filters(f -> f.stripPrefix(3)
                                 .hystrix(config -> config.setName("hystrixName").setFallbackUri("forward:/fallback"))
