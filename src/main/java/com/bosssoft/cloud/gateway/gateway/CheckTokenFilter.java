@@ -44,6 +44,8 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    private static final Boolean AUTH = true;
+
     private static String[] whiteList = {"login"};
     private static String[] blackList = {"test"};
 
@@ -58,6 +60,10 @@ public class CheckTokenFilter implements GatewayFilter, Ordered {
             if (data == null) {
                 // 无效，提示token失效，需重新登录
                 throw new AppException(ResultEnum.TOKEN_INVALID);
+            }
+            // 用于测试，不需要其他鉴权
+            if (AUTH) {
+                return chain.filter(exchange);
             }
             String currentUrl = exchange.getRequest().getHeaders().getFirst("currentUrl");
             if (StrUtil.isNotEmpty(currentUrl)){
